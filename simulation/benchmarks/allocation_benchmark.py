@@ -23,6 +23,7 @@ def run_allocation_benchmark(
 
     for num_donations, num_agencies in sizes:
         problem_size = num_donations
+        print(f"  -> Allocation benchmark size {problem_size} ({num_donations} donations, {num_agencies} agencies)...", flush=True)
         for seed in seeds:
             for rep in range(1, repetitions + 1):
                 scenario_seed = seed * 1000 + rep

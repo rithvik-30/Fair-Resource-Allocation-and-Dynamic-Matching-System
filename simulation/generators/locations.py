@@ -12,7 +12,11 @@ def generate_locations(
     bounding_box: Tuple[float, float, float, float] = DEFAULT_BOUNDING_BOX,
     seed: Optional[int] = 42,
 ) -> List[Location]:
-    """Generates synthetic lat/lon locations inside a bounding box deterministically."""
+    """Generates synthetic lat/lon locations inside a bounding box deterministically.
+
+    NOTE: All generated geographic coordinates are SYNTHETIC benchmark data
+    and are not real operational locations.
+    """
     rng = random.Random(seed)
     min_lat, max_lat, min_lon, max_lon = bounding_box
 

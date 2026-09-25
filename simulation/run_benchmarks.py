@@ -21,13 +21,13 @@ def parse_args():
     parser.add_argument(
         "--quick",
         action="store_true",
-        help="Run a quick smoke benchmark with small sizes (10, 25) and single seed.",
+        help="Run a quick smoke benchmark with sizes (10, 25, 50), seed 42, 1 repetition.",
     )
     parser.add_argument(
         "--sizes",
         type=str,
-        default="10,25,50,100",
-        help="Comma-separated problem sizes (default: 10,25,50,100). Larger sizes like 250,500,1000 can also be passed.",
+        default="10,25,50,100,250,500,1000",
+        help="Comma-separated problem sizes (default: 10,25,50,100,250,500,1000).",
     )
     parser.add_argument(
         "--seeds",
@@ -54,18 +54,19 @@ def main():
     args = parse_args()
 
     if args.quick:
-        sizes_alloc = [(10, 5), (25, 12)]
-        sizes_disp = [10, 25]
+        parsed_sizes = [10, 25, 50]
+        sizes_alloc = [(n, max(2, n // 2)) for n in parsed_sizes]
+        sizes_disp = parsed_sizes
         seeds = [42]
         reps = 1
-        print("=== RUNNING QUICK SMOKE BENCHMARK ===")
+        print("=== RUNNING QUICK SMOKE BENCHMARK (Sizes: [10, 25, 50], Seed: 42, Reps: 1) ===")
     else:
         parsed_sizes = [int(s.strip()) for s in args.sizes.split(",") if s.strip()]
         sizes_alloc: List[Tuple[int, int]] = [(n, max(2, n // 2)) for n in parsed_sizes]
         sizes_disp: List[int] = parsed_sizes
         seeds = [int(s.strip()) for s in args.seeds.split(",") if s.strip()]
         reps = args.repetitions
-        print(f"=== RUNNING BENCHMARK (Sizes: {parsed_sizes}, Seeds: {seeds}, Reps: {reps}) ===")
+        print(f"=== RUNNING FULL BENCHMARK (Sizes: {parsed_sizes}, Seeds: {seeds}, Reps: {reps}) ===")
 
     output_dir = args.output_dir
     plots_dir = os.path.join(output_dir, "plots")

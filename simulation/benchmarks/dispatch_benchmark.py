@@ -35,6 +35,7 @@ def run_dispatch_benchmark(
         num_requests = n
         num_volunteers = n
         problem_size = n
+        print(f"  -> Dispatch benchmark size {problem_size} ({num_requests} reqs, {num_volunteers} vols)...", flush=True)
 
         for seed in seeds:
             for rep in range(1, repetitions + 1):
