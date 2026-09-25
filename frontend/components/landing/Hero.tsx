@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { CursorRingField } from './CursorRingField';
-import { ArrowRight, BarChart2, ShieldCheck, Sparkles, Zap } from 'lucide-react';
+import { CursorRingField } from '@/components/ui/cursor-ring-field';
+import { ArrowRight, Sparkles, Zap } from 'lucide-react';
 
 export function LandingHero() {
   return (
@@ -48,7 +48,7 @@ export function LandingHero() {
         </div>
       </div>
 
-      {/* Embedded Cursor Ring Field Visualizer */}
+      {/* Embedded Official Originkit Cursor Ring Field Visualizer */}
       <CursorRingField />
     </section>
   );
