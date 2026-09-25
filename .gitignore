@@ -9,3 +9,9 @@ htmlcov/
 env/
 venv/
 .env
+
+# Frontend ignores
+frontend/node_modules
+frontend/.next
+frontend/.env.local
+.env.local
