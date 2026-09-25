@@ -1,9 +1,10 @@
-﻿from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from backend.api.routes.allocation import router as allocation_router
+from backend.api.routes.database import router as database_router
 from backend.api.routes.dispatch import router as dispatch_router
 from backend.api.routes.health import router as health_router
 from backend.api.routes.simulation import router as simulation_router
@@ -25,11 +26,12 @@ app.add_middleware(
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["attributes", "*"],
 )
 
 # Include API Routers
 app.include_router(health_router)
+app.include_router(database_router)
 app.include_router(allocation_router)
 app.include_router(dispatch_router)
 app.include_router(simulation_router)
@@ -45,7 +47,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         errors.append({"location": loc_str, "message": msg})
 
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content={
             "error": True,
             "message": "Invalid request parameters or malformed input schema.",

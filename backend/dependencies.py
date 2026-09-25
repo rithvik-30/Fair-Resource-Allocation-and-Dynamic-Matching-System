@@ -1,4 +1,4 @@
-﻿"""Dependencies for FRADMS API."""
+"""Dependencies for FRADMS API."""
 
 from backend.services.allocation_service import AllocationService
 from backend.services.dispatch_service import DispatchService

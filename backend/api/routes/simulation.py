@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends
 from backend.api.schemas.simulation import (
     QuickSimulationRequest,
     QuickSimulationResponse,

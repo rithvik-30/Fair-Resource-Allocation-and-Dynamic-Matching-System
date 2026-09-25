@@ -1,4 +1,4 @@
-﻿import csv
+import csv
 from dataclasses import asdict, dataclass
 import os
 from typing import Any, Dict, List, Optional

@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from backend.api.schemas.dispatch import (
     DispatchComparisonResponse,
     DispatchRequest,

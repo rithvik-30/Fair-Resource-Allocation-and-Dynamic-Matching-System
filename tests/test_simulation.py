@@ -1,4 +1,4 @@
-﻿import os
+import os
 import pytest
 
 from engine.models.location import Location

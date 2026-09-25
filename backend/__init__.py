@@ -1,1 +1,1 @@
-﻿"""Backend package for FRADMS API."""
+"""Backend package for FRADMS API."""

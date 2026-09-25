@@ -1,7 +1,8 @@
-﻿import copy
+import copy
 from datetime import datetime, timezone
 import time
 from typing import List, Optional
+from sqlalchemy.orm import Session
 
 from engine.dispatch.batch_matching import BatchBipartiteDispatcher
 from engine.dispatch.nearest import NearestVolunteerDispatcher
@@ -19,6 +20,7 @@ from backend.api.schemas.dispatch import (
     DispatchMatchResponse,
     DispatchResponse,
 )
+from backend.db.repositories import records
 
 
 class DispatchService:
@@ -33,6 +35,7 @@ class DispatchService:
         requests: List[RescueRequest],
         volunteers: List[Volunteer],
         current_time: Optional[datetime] = None,
+        db: Optional[Session] = None,
     ) -> DispatchResponse:
         reqs_copy = copy.deepcopy(requests)
         vols_copy = copy.deepcopy(volunteers)
@@ -72,6 +75,19 @@ class DispatchService:
             for m in batch_res.matches
         ]
 
+        if db is not None:
+            for m in batch_res.matches:
+                try:
+                    records.create_dispatch_record(
+                        db=db,
+                        rescue_request_id=m.request_id,
+                        volunteer_id=m.volunteer_id,
+                        algorithm=batch_res.algorithm_name,
+                        distance_km=round(m.total_distance_km, 2),
+                    )
+                except Exception:
+                    pass
+
         return DispatchResponse(
             algorithm=batch_res.algorithm_name,
             assigned_requests_count=assigned_cnt,
@@ -91,9 +107,10 @@ class DispatchService:
         requests: List[RescueRequest],
         volunteers: List[Volunteer],
         current_time: Optional[datetime] = None,
+        db: Optional[Session] = None,
     ) -> DispatchResponse:
         return self._execute_dispatch(
-            self.nearest_dispatcher, requests, volunteers, current_time
+            self.nearest_dispatcher, requests, volunteers, current_time, db=db
         )
 
     def run_scored(
@@ -101,9 +118,10 @@ class DispatchService:
         requests: List[RescueRequest],
         volunteers: List[Volunteer],
         current_time: Optional[datetime] = None,
+        db: Optional[Session] = None,
     ) -> DispatchResponse:
         return self._execute_dispatch(
-            self.scored_dispatcher, requests, volunteers, current_time
+            self.scored_dispatcher, requests, volunteers, current_time, db=db
         )
 
     def run_batch(
@@ -111,9 +129,10 @@ class DispatchService:
         requests: List[RescueRequest],
         volunteers: List[Volunteer],
         current_time: Optional[datetime] = None,
+        db: Optional[Session] = None,
     ) -> DispatchResponse:
         return self._execute_dispatch(
-            self.batch_dispatcher, requests, volunteers, current_time
+            self.batch_dispatcher, requests, volunteers, current_time, db=db
         )
 
     def run_comparison(
@@ -121,10 +140,11 @@ class DispatchService:
         requests: List[RescueRequest],
         volunteers: List[Volunteer],
         current_time: Optional[datetime] = None,
+        db: Optional[Session] = None,
     ) -> DispatchComparisonResponse:
-        nearest_res = self.run_nearest(requests, volunteers, current_time)
-        scored_res = self.run_scored(requests, volunteers, current_time)
-        batch_res = self.run_batch(requests, volunteers, current_time)
+        nearest_res = self.run_nearest(requests, volunteers, current_time, db=db)
+        scored_res = self.run_scored(requests, volunteers, current_time, db=db)
+        batch_res = self.run_batch(requests, volunteers, current_time, db=db)
 
         summary = {
             "total_requests": len(requests),

@@ -1,4 +1,4 @@
-﻿import copy
+import copy
 from datetime import datetime, timezone
 import time
 from typing import List

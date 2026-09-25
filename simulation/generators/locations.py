@@ -1,4 +1,4 @@
-﻿import random
+import random
 from typing import List, Optional, Tuple
 
 from engine.models.location import Location
