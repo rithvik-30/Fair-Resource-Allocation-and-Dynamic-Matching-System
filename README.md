@@ -2,178 +2,98 @@
 
 An algorithmic decision-support system for fair resource allocation and dynamic task matching, applied to food rescue logistics.
 
+---
+
 ## Overview
 
-Food rescue organizations need to make two important decisions:
+Food rescue organizations need to make two important computational decisions:
 
-1. **Resource Allocation** — deciding how surplus food should be distributed among recipient agencies with different needs, capacities, priorities, and locations.
-2. **Dynamic Matching** — assigning incoming rescue requests to available volunteers while considering distance, vehicle capacity, urgency, availability, and workload.
+1. **Fair Food Resource Allocation**: Determining how surplus food donations should be distributed among recipient agencies with different needs, storage capacities, priorities, and cold-chain requirements.
+2. **Dynamic Volunteer Dispatch**: Assigning incoming rescue tasks to available volunteers while considering geographic distance, vehicle capacity, refrigeration compatibility, deadline urgency, and workload equity.
 
-This project models these decisions as computational problems and compares different algorithmic approaches through simulation and benchmarking.
+This repository models these decisions as formal algorithmic problems, providing clean, deterministic, and offline-runnable engines with rigorous evaluation metrics.
 
-The goal is not simply to build a food-rescue application, but to study how different algorithms perform when solving resource allocation and dynamic matching problems.
+---
+
+## Algorithmic Engines
+
+### 1. Fair Resource Allocation Engine
+- **Greedy Allocation** (implemented in engine/allocation/greedy.py): Myopically fulfills highest-priority agency demand first.
+- **Fairness-Aware Allocation** (implemented in engine/allocation/fair.py): Maximizes Jain's Fairness Index and equalizes fulfillment ratios across agencies.
+
+### 2. Dynamic Volunteer Dispatch Engine
+- **Nearest Volunteer Greedy** (implemented in engine/dispatch/nearest.py): Online baseline sequentially assigning the closest feasible volunteer.
+- **Score-Based Dispatch** (implemented in engine/dispatch/scored.py): Multi-criteria utility function balancing pickup distance, deadline urgency, workload equity, and vehicle capacity utilization.
+- **Batch Bipartite Matching** (implemented in engine/dispatch/batch_matching.py): Global Minimum Weight Bipartite Matching solved via the Hungarian Algorithm (scipy.optimize.linear_sum_assignment).
 
 ---
 
 ## Core Computer Science
 
-The project focuses on:
-
-- Greedy algorithms
-- Bipartite matching
-- Fair resource allocation
-- Integer Linear Programming (ILP)
-- Dynamic / online decision-making
-- Graph-based modelling
-- Simulation
-- Algorithm benchmarking
-- Complexity and scalability analysis
+- Greedy Algorithms & Online Decision-Making
+- Minimum Weight Bipartite Matching (Hungarian Algorithm)
+- Fair Resource Allocation & Jain's Fairness Index
+- Geographic Haversine Distance Calculation
+- Complexity & Scalability Analysis
 
 ---
 
-## Algorithmic Approach
+## Project Structure
 
-### 1. Food Allocation
-
-Determine how available food should be distributed among recipient agencies.
-
-Planned approaches:
-
-- Greedy allocation
-- Fairness-aware allocation
-- Integer Linear Programming optimization
-
-### 2. Volunteer Dispatch
-
-Determine which available volunteer should handle each rescue request.
-
-Planned approaches:
-
-- Nearest-volunteer greedy matching
-- Score-based matching
-- Batch bipartite matching
-
-The approaches will be evaluated against common scenarios rather than assuming that one algorithm is always optimal.
-
----
-
-## Simulation and Benchmarking
-
-A simulation environment will generate different combinations of:
-
-- Donors
-- Recipient agencies
-- Volunteers
-- Food donations
-- Rescue requests
-- Availability windows
-- Geographic locations
-
-The algorithms will be compared using metrics such as:
-
-- Food successfully allocated
-- Travel distance
-- Response time
-- Resource utilization
-- Allocation fairness
-- Volunteer workload fairness
-- Execution time
-- Scalability
-
-Experiments will investigate questions such as:
-
-- How does fairness affect efficiency?
-- When does global matching outperform greedy approaches?
-- How do the algorithms behave as the number of requests and volunteers increases?
-- What trade-offs exist between solution quality and computational cost?
+`	ext
+.
+├── engine/
+│   ├── allocation/        # Fair Food Resource Allocation Engine
+│   │   ├── fair.py
+│   │   ├── greedy.py
+│   │   └── result.py
+│   ├── dispatch/          # Dynamic Volunteer Dispatch Engine
+│   │   ├── batch_matching.py
+│   │   ├── distance.py
+│   │   ├── feasibility.py
+│   │   ├── nearest.py
+│   │   ├── result.py
+│   │   └── scored.py
+│   ├── metrics/           # Evaluation Metrics (Fairness & Dispatch)
+│   │   ├── dispatch.py
+│   │   └── fairness.py
+│   └── models/            # Domain Data Models (Pydantic v2)
+│       ├── agency.py
+│       ├── donation.py
+│       ├── location.py
+│       ├── rescue_request.py
+│       └── volunteer.py
+├── examples/              # Demonstration Scripts
+│   ├── allocation_demo.py
+│   └── dispatch_demo.py
+├── docs/                  # Formal Algorithmic Documentation
+│   ├── allocation-algorithms.md
+│   ├── dispatch-algorithms.md
+│   └── problem-formulation.md
+└── tests/                 # Comprehensive Pytest Suite
+`
 
 ---
 
-## System Architecture
+## Quickstart & Verification
 
-```text
-                    Input Data
-                        │
-                        ▼
-                Simulation Engine
-                        │
-             ┌──────────┴──────────┐
-             ▼                     ▼
-      Allocation Engine      Dispatch Engine
-             │                     │
-       ┌─────┼─────┐         ┌─────┼─────┐
-       │     │     │         │     │     │
-    Greedy Fair   ILP     Nearest Score  Batch
-       │     │     │         │     │     │
-       └─────┴─────┘         └─────┴─────┘
-             │                     │
-             └──────────┬──────────┘
-                        ▼
-                  Metrics Engine
-                        │
-                        ▼
-                   Benchmarking
-                        │
-                        ▼
-                  FastAPI Backend
-                        │
-                        ▼
-               PostgreSQL / PostGIS
-                        │
-                        ▼
-                Next.js Dashboard
+Run the complete unit test suite:
+`ash
+python -m pytest -v
+`
 
-Tech Stack
-Algorithm Engine
-Python
-NetworkX
-Google OR-Tools
-NumPy
-Pytest
-Simulation & Evaluation
-Pandas
-Matplotlib
-Backend
-FastAPI
-Pydantic
-Database
-PostgreSQL
-PostGIS
-Frontend
-Next.js
-TypeScript
-Tailwind CSS
-Leaflet
-Recharts
-Infrastructure
-Docker
-GitHub Actions
-Development Philosophy
+Run the Resource Allocation demonstration:
+`ash
+python examples/allocation_demo.py
+`
 
-The project follows an algorithm-first approach.
+Run the Dynamic Volunteer Dispatch demonstration:
+`ash
+python examples/dispatch_demo.py
+`
 
-The allocation, matching, and optimization algorithms will be developed and tested independently before being integrated into the backend and frontend.
+---
 
-Each algorithm will be evaluated not only on whether it produces a valid solution, but also on:
-
-Solution quality
-Fairness
-Efficiency
-Runtime
-Scalability
-
-This allows the project to serve as both a practical system and an experimental platform for comparing algorithmic approaches.
-
-Project Status
-
-🚧 Under Development
-
-Current focus:
-
-Project architecture
-Problem formulation
-Algorithm design
-Simulation environment
-License
+## License
 
 MIT License
