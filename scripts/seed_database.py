@@ -30,7 +30,7 @@ def seed():
             print("Database already contains data. Skipping seed.")
             return
 
-        now = datetime.no|(timezone.utc)
+        now = datetime.now(timezone.utc)
 
         # 1. Donors (3)
         donors = [
